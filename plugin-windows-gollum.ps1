@@ -1,9 +1,10 @@
 $root = (Get-Item -Path $PSScriptRoot).PSDrive.Root
-$LOGDIR  = Join-Path -Path $root -ChildPath 'tmp\rsc-logs\'
+$LOGDIR  = Join-Path -Path $root -ChildPath '\rsc-logs\'
 $LOGFILE = Join-Path -Path $LOGDIR -ChildPath 'gollum.log'
-$INSTALLDIR = Join-Path -Path $root -ChildPath 'tmp\ProgramFiles\gollum'
+$INSTALLDIR = Join-Path -Path $root -ChildPath '\ProgramFiles\gollum'
 $BINDIR = Join-Path -Path $INSTALLDIR -ChildPath 'bin'
 $GOLLUM_WAR_URL = "https://github.com/gollum/gollum/releases/latest/download/gollum.war"
+$GOLLUM_VERSION =  [Environment]::GetEnvironmentVariable('gollum_version')
 
 Function Write-Log([String] $logText) {
   '{0:u}: {1}' -f (Get-Date), $logText | Out-File $LOGFILE -Append
@@ -22,6 +23,7 @@ Function Main {
   }
 
   Write-Log "Start plugin-windows-gollum"
+  Write-Log "Gollum version parameter: {1}" -f $GOLLUM_VERSION
 
   try {
     New-Item -ItemType Directory -Path $INSTALLDIR
@@ -33,8 +35,17 @@ Function Main {
       Throw $_
   }
 
+  try {
+      Write-Log "Installing Java Runtime"
+      choco feature enable -n allowGlobalConfirmation
+      choco install javaruntime  --no-progress
+  }
+  catch {
+      Write-Log "$_"
+      Throw $_
+  }
 
-  Write-Log "Download installation exe"
+  Write-Log "Download Gollum WAR"
   try {
     Invoke-RestMethod $GOLLUM_WAR_URL -OutFile (Join-Path -Path $INSTALLDIR -ChildPath 'gollum.war')
   }
