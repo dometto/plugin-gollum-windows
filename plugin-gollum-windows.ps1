@@ -4,7 +4,7 @@ $LOGFILE = Join-Path -Path $LOGDIR -ChildPath 'gollum.log'
 $INSTALLDIR = Join-Path -Path $root -ChildPath '\Program Files\gollum'
 $BINDIR = Join-Path -Path $INSTALLDIR -ChildPath 'bin'
 $GOLLUM_VERSION =  [Environment]::GetEnvironmentVariable('gollum_version')
-$GOLLUM_WAR_URL = 'https://github.com/gollum/gollum/releases/download/{0}/gollum.war' -f $GOLLUM_VERSION
+$GOLLUM_WAR_URL = 'https://github.com/gollum/gollum/releases/{0}/download/gollum.war' -f $GOLLUM_VERSION
 $BAT_FILE = '"C:\Program Files\Java\jre-1.8\bin\java.exe" -jar "C:\Program Files\gollum\gollum.war" -S gollum %*'
 
 Function Write-Log([String] $logText) {
